@@ -1,97 +1,951 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   
-    <style>
-        .container {
-            display: flex;
-            gap:20px;
-            justify-content: center;
-        }
-        .card {
-            width:280px;
-            text-align:center;
-            background-color:white;
-            padding:20px;
-            border-radius:10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.2);
-        }
-        .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 0 15px rgba(0,0,0,0.2);
-        }
-        .card a {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 10px;
-            background-color: blueviolet;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: 0.3s;
-        }
-        .card a:hover {
-            transform:scale(1.05) translateY(-5px);
-              background-color: #8b5e3c;
-        }
-        .card img {
-            width: 100%;
-            border-radius: 10px;
-            margin-bottom:10px;
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        body {
-            background-color: #f5f5f5;
-        }
-        @media (max-width: 600px) {
-            .container {
-                flex-direction: column;
+<html dir="rtl">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="UTF-8">
+        <title>قائمة المقهى</title>
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Tajawal:wght@300;400;700&display=swap" rel="stylesheet">
+        <style>
+            * { box-sizing: border-box; margin: 0; padding: 0; }
+
+            body {
+                background-color: #e8d8c3;
+                font-family: 'Tajawal', arial, sans-serif;
+            }
+
+            /* ===== شريط اللغة ===== */
+            .lang-bar {
+                background: #2b1206;
+                display: flex;
+                justify-content: center;
+                gap: 6px;
+                padding: 6px 12px;
+            }
+            .lang-btn {
+                background: none;
+                border: 1.5px solid #d4a96a55;
+                border-radius: 20px;
+                color: #d4a96a99;
+                font-family: 'Tajawal', sans-serif;
+                font-size: 13px;
+                font-weight: 700;
+                padding: 4px 14px;
+                cursor: pointer;
+                transition: 0.2s;
+            }
+            .lang-btn:hover {
+                border-color: #d4a96a;
+                color: #d4a96a;
+            }
+            .lang-btn.active {
+                background: #d4a96a;
+                border-color: #d4a96a;
+                color: #3e1f0a;
+            }
+            /* ====================== */
+
+            .header {
+                display: flex;
                 align-items: center;
+                justify-content: space-between;
+                background: #3e1f0a;
+                padding: 12px 20px;
+                margin-bottom: 10px;
+                position: sticky;
+                top: 0;
+                z-index: 100;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            }
+            .header-left {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+            }
+            .brand {
+                font-family: 'Playfair Display', serif;
+                font-size: 22px;
+                color: #d4a96a;
+                letter-spacing: 4px;
+            }
+            h1 {
+                font-family: 'Playfair Display', serif;
+                text-align: center;
+                font-size: 42px;
+                color: #3e1f0a;
+                letter-spacing: 2px;
+                padding: 30px 0 10px;
+            }
+
+            .cart-btn {
+                background: #d4a96a;
+                border: none;
+                border-radius: 50px;
+                padding: 10px 18px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                cursor: pointer;
+                transition: 0.3s;
+                color: #3e1f0a;
+                font-family: 'Tajawal', sans-serif;
+                font-size: 15px;
+                font-weight: 700;
+            }
+            .cart-btn:hover {
+                background: #e8be80;
+                transform: scale(1.05);
+            }
+            .cart-icon { width: 24px; }
+            #count {
+                background: #3e1f0a;
+                color: #d4a96a;
+                border-radius: 50%;
+                width: 24px;
+                height: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 13px;
+                font-weight: 700;
+                transition: transform 0.2s;
+            }
+            #count.bump { transform: scale(1.5); }
+
+            .container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 20px;
+                justify-content: space-evenly;
+                background: #e8d8c3;
+                padding: 20px 10px;
             }
             .card {
-                width: 90%;
+                width: 45%;
+                background: #ffffff;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+                transition: 0.3s;
+                border-radius: 15px;
+                padding: 15px;
             }
-        }
+            .card img {
+                width: 100%;
+                height: 140px;
+                object-fit: cover;
+                border-radius: 10px;
+                margin-top: 15px;
+            }
+            .card h2 {
+                font-size: 18px;
+                margin-bottom: 5px;
+                color: #3e1f0a;
+                font-family: 'Playfair Display', serif;
+            }
+            .card p { font-size: 14px; color: #777; }
+            .card span {
+                font-weight: bold;
+                color: #8b5e3c;
+                margin-right: 10px;
+                font-size: 15px;
+            }
+            .card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 16px 35px rgba(0,0,0,0.15);
+            }
 
-    </style>
+            .order-btn {
+                margin-top: 10px;
+                padding: 9px 16px;
+                background: #6b3f1f;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                transition: 0.3s;
+                font-size: 14px;
+                font-family: 'Tajawal', sans-serif;
+                font-weight: 700;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+                cursor: pointer;
+            }
+            .order-btn:hover {
+                background: #a9744f;
+                transform: scale(1.06);
+            }
+
+            .overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.55);
+                z-index: 200;
+                backdrop-filter: blur(3px);
+            }
+            .overlay.open { display: block; }
+
+            .cart-panel {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: min(360px, 95vw);
+                height: 100%;
+                background: #fff9f4;
+                z-index: 300;
+                display: flex;
+                flex-direction: column;
+                box-shadow: -6px 0 30px rgba(62,31,10,0.2);
+                transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
+                overflow-y: auto;
+            }
+            .cart-panel.open { right: 0; }
+
+            .cart-header {
+                background: #3e1f0a;
+                padding: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+            .cart-header h2 {
+                font-family: 'Playfair Display', serif;
+                font-size: 20px;
+                color: #d4a96a;
+            }
+            .close-btn {
+                background: none;
+                border: none;
+                color: white;
+                font-size: 26px;
+                cursor: pointer;
+                transition: 0.2s;
+            }
+            .close-btn:hover { transform: rotate(90deg); }
+
+            .cart-items {
+                flex: 1;
+                overflow-y: auto;
+                padding: 16px;
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                direction: rtl;
+                min-height: 110px;
+            }
+            .cart-empty { text-align: center; padding: 60px 20px; color: #bbb; }
+            .cart-empty .empty-icon { font-size: 52px; margin-bottom: 12px; }
+            .cart-empty p { font-size: 15px; }
+
+            .cart-item {
+                background: #e8d8c3;
+                border-radius: 12px;
+                padding: 12px;
+                display: flex;
+                gap: 10px;
+                align-items: center;
+                animation: slideIn 0.25s;
+                direction: rtl;
+            }
+            .ci-info { 
+                flex:1;
+                min-width: 0;
+                }
+            .ci-name { font-size: 17px; font-weight: 800; color: #3e1f0a;  line-height:1.4; }
+            .ci-price { font-size: 12px; color: #a0673a; margin-top: 4px; }
+            .ci-controls { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+            .qty-btn {
+                background: #6b3f1f;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                width: 26px;
+                height: 26px;
+                font-size: 16px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: 0.2s;
+            }
+            .qty-btn:hover { background: #a0673a; }
+            .qty-num { font-weight: 700; font-size: 15px; min-width: 20px; text-align: center; color: #3e1f0a; }
+            .ci-total { font-weight: 700; color: #6b3f1f; font-size: 14px; flex-shrink: 0;  min-width:70px; text-align: left;}
+
+            .cart-footer {
+                padding: 16px;
+                border-top: 2px solid #e8d8c3;
+                background: #fff9f4;
+                direction: rtl;
+            }
+            .summary-row {
+                display: flex;
+                justify-content: space-between;
+                font-size: 14px;
+                color: #888;
+                margin-bottom: 6px;
+            }
+            .total-row {
+                display: flex;
+                justify-content: space-between;
+                font-size: 18px;
+                font-weight: 700;
+                color: #3e1f0a;
+                margin: 10px 0 16px;
+                padding-top: 10px;
+                border-top: 1px dashed #d4a96a;
+            }
+            .checkout-btn {
+                width: 100%;
+                padding: 14px;
+                background: #3e1f0a;
+                color: #d4a96a;
+                border: none;
+                border-radius: 12px;
+                font-family: 'Tajawal', sans-serif;
+                font-size: 16px;
+                font-weight: 700;
+                cursor: pointer;
+                transition: 0.3s;
+            }
+            .checkout-btn:hover { background: #6b3f1f; transform: scale(1.02); }
+            .clear-btn {
+                width: 100%;
+                padding: 10px;
+                background: none;
+                color: #ccc;
+                border: 1px solid #eee;
+                border-radius: 10px;
+                font-family: 'Tajawal', sans-serif;
+                font-size: 13px;
+                cursor: pointer;
+                margin-top: 8px;
+                transition: 0.2s;
+            }
+            .clear-btn:hover { color: #e55; border-color: #e55; }
+
+            /* ===== طريقة الاستلام ===== */
+            .delivery-section {
+                background: #fff3e8;
+                border-radius: 12px;
+                padding: 14px;
+                margin-bottom: 14px;
+                border: 1.5px solid #d4a96a;
+                direction: rtl;
+            }
+            .delivery-section h3 {
+                font-size: 14px;
+                font-weight: 700;
+                color: #3e1f0a;
+                margin-bottom: 10px;
+                font-family: 'Tajawal', sans-serif;
+            }
+            .delivery-options {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 7px;
+            }
+            .delivery-option {
+                background: #fff;
+                border: 2px solid #e0c9a6;
+                border-radius: 9px;
+                padding: 8px 6px;
+                text-align: center;
+                cursor: pointer;
+                transition: 0.2s;
+                font-size: 12px;
+                font-weight: 700;
+                color: #6b3f1f;
+                font-family: 'Tajawal', sans-serif;
+                line-height: 1.4;
+            }
+            .delivery-option:hover {
+                border-color: #d4a96a;
+                background: #fdf0de;
+            }
+            .delivery-option.selected {
+                border-color: #3e1f0a;
+                background: #3e1f0a;
+                color: #d4a96a;
+            }
+            .delivery-option .d-icon { font-size: 18px; display: block; margin-bottom: 3px; }
+
+            .delivery-fields {
+                margin-top: 12px;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                animation: slideIn 0.2s;
+            }
+            .delivery-fields input {
+                width: 100%;
+                padding: 10px 12px;
+                border: 1.5px solid #d4a96a;
+                border-radius: 8px;
+                font-family: 'Tajawal', sans-serif;
+                font-size: 13px;
+                color: #3e1f0a;
+                background: #fff;
+                outline: none;
+                direction: rtl;
+                transition: border-color 0.2s;
+            }
+            .delivery-fields input:focus {
+                border-color: #3e1f0a;
+            }
+            .delivery-fields input::placeholder {
+                color: #bba080;
+            }
+            /* ========================= */
+
+            .toast {
+                position: fixed;
+                bottom: 30px;
+                left: 50%;
+                transform: translateX(-50%) translateY(80px);
+                background: #3e1f0a;
+                color: #d4a96a;
+                padding: 12px 24px;
+                border-radius: 50px;
+                font-size: 14px;
+                font-weight: 600;
+                z-index: 999;
+                transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+                white-space: nowrap;
+                font-family: 'Tajawal', sans-serif;
+            }
+            .toast.show { transform: translateX(-50%) translateY(0); }
+
+            @keyframes slideIn {
+                from { opacity:0; transform:translateX(20px); }
+                to   { opacity:1; transform:translateX(0); }
+            }
+        </style>
     </head>
     <body>
-        <h1>Coffee Menu </h1>
+
+        <!-- شريط اللغة -->
+        <div class="lang-bar">
+            <button class="lang-btn active" onclick="setLang('ar')">عربي</button>
+            <button class="lang-btn" onclick="setLang('en')">English</button>
+            <button class="lang-btn" onclick="setLang('fr')">Français</button>
+        </div>
+
+        <div class="header">
+            <div class="header-left">
+                <img src="coffee.jpeg" class="icon">
+                <span class="brand">OSLO</span>
+            </div>
+            <button class="cart-btn" onclick="openCart()">
+                <img src="cart.jpeg" class="cart-icon">
+                <span data-i18n="cart">السلة</span>
+                <span id="count">0</span>
+            </button>
+        </div>
+
+        <h1>Menu</h1>
+
         <div class="container">
-        <div class="card">
-            <img src="cake.jpeg">
-            <h2>japanese cheesecake</h2>
-            <p>تضيز كيك ياباني خفيف وناعم</p>
-            <span>180mru</span>
-            <a href="#">أطلبي الان</a>
+            <div class="card drink">
+                <h2 data-i18n="cappuccino_name">Cappuccino</h2>
+                <p data-i18n="cappuccino_desc">قهوة بالحليب مع رغوة ناعمة</p>
+                <span>50mru</span>
+                <button class="order-btn" data-i18n="order_btn" onclick="addCart('Cappuccino', 50)">اطلب الان</button>
+                <img src="Cappuccino.jpeg">
+            </div>
+            <div class="card drink">
+                <h2 data-i18n="espresso_name">Espresso</h2>
+                <p data-i18n="espresso_desc">strong coffee</p>
+                <span>30mru</span>
+                <button class="order-btn" data-i18n="order_btn" onclick="addCart('Espresso', 30)">اطلب الان</button>
+                <img src="Espresso.jpeg">
+            </div>
+            <div class="card dessert">
+                <h2 data-i18n="muffin_name">Muffin</h2>
+                <p data-i18n="muffin_desc">مافن شكولاتة طري ولذيذ</p>
+                <span>50mru</span>
+                <button class="order-btn" data-i18n="order_btn" onclick="addCart('Muffin', 50)">اطلب الان</button>
+                <img src="Muffin.jpeg">
+            </div>
+            <div class="card dessert">
+                <h2 data-i18n="pancake_name">Pancake</h2>
+                <p data-i18n="pancake_desc">بان كيك طري وخفيف مع صوص الشوكولاتة</p>
+                <span>100mru</span>
+                <button class="order-btn" data-i18n="order_btn" onclick="addCart('Pancake', 100)">اطلب الان</button>
+                <img src="Pancakes.jpeg">
+            </div>
+            <div class="card vip">
+                <h2 data-i18n="cheesecake_name">Japanese Cheesecake</h2>
+                <p data-i18n="cheesecake_desc">تشيز كيك ياباني خفيف وهش بقوام ناعم</p>
+                <span>180mru</span>
+                <button class="order-btn" data-i18n="order_btn" onclick="addCart('Japanese Cheesecake', 180)">اطلب الان</button>
+                <img src="Cheesecake.jpeg">
+            </div>
+            <div class="card dessert">
+                <h2 data-i18n="crepe_name">Chocolate & Banana Crep</h2>
+                <p data-i18n="crepe_desc">كريب طري بحشوة شكولاتة وموز طازج</p>
+                <span>150mru</span>
+                <button class="order-btn" data-i18n="order_btn" onclick="addCart('Chocolate Crep', 150)">اطلب الان</button>
+                <img src="Crepe.jpeg">
+            </div>
         </div>
-        <div class="card">
-            <img src="mvn.jpeg">
-            <h2>coffee maffin</h2>
-            <p>مافن القهوة</p>
-            <span>80mru</span>
-            <a hef="#">اطلب الان</a>
+
+        <div class="overlay" id="overlay" onclick="closeCart()"></div>
+
+        <div class="cart-panel" id="cartPanel">
+            <div class="cart-header">
+                <h2>🛒 <span data-i18n="cart_title">سلة الطلبات</span></h2>
+                <button class="close-btn" onclick="closeCart()">✕</button>
+            </div>
+            <div class="cart-items" id="cartItems">
+                <div class="cart-empty" id="emptyMsg">
+                    <div class="empty-icon">🛒</div>
+                    <p data-i18n="cart_empty">سلتك فارغة<br><small>أضف منتجات من القائمة</small></p>
+                </div>
+            </div>
+            <div class="cart-footer" id="cartFooter" style="display:none">
+                <div class="summary-row">
+                    <span data-i18n="items_count_label">عدد المنتجات</span>
+                    <span id="itemCount">0</span>
+                </div>
+                <div class="total-row">
+                    <span data-i18n="total_label">الإجمالي</span>
+                    <span id="totalPrice">0 MRU</span>
+                </div>
+
+                <!-- قسم طريقة الاستلام -->
+                <div class="delivery-section">
+                    <h3>🚀 <span data-i18n="delivery_title">طريقة الاستلام</span></h3>
+                    <div class="delivery-options">
+                        <div class="delivery-option" id="opt-dine" onclick="selectDelivery('dine')">
+                            <span class="d-icon">🪑</span><span data-i18n="opt_dine">داخل المطعم</span>
+                        </div>
+                        <div class="delivery-option" id="opt-car" onclick="selectDelivery('car')">
+                            <span class="d-icon">🚗</span><span data-i18n="opt_car">أمام المطعم</span>
+                        </div>
+                        <div class="delivery-option" id="opt-home" onclick="selectDelivery('home')">
+                            <span class="d-icon">🏠</span><span data-i18n="opt_home">توصيل للمنزل</span>
+                        </div>
+                        <div class="delivery-option" id="opt-pickup" onclick="selectDelivery('pickup')">
+                            <span class="d-icon">⏱️</span><span data-i18n="opt_pickup">استلام عند الوصول</span>
+                        </div>
+                    </div>
+
+                    <!-- حقول داخل المطعم -->
+                    <div class="delivery-fields" id="fields-dine" style="display:none">
+                        <input type="text" id="table-number" data-i18n-placeholder="ph_table" placeholder="رقم الطاولة">
+                    </div>
+
+                    <!-- حقول أمام المطعم / في السيارة -->
+                    <div class="delivery-fields" id="fields-car" style="display:none">
+                        <input type="text" id="car-type" data-i18n-placeholder="ph_car_type" placeholder="نوع السيارة">
+                        <input type="tel"
+                            id="car-phone"
+                            data-i18n-placeholder="ph_phone"
+                            placeholder="رقم الهاتف"
+                            maxlength="8"
+                            oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                    </div>
+
+                    <!-- حقول توصيل للمنزل -->
+                    <div class="delivery-fields" id="fields-home" style="display:none">
+                        <input type="text" id="home-address" data-i18n-placeholder="ph_address" placeholder="العنوان">
+                        <input type="tel"
+                            id="home-phone"
+                            data-i18n-placeholder="ph_phone"
+                            placeholder="رقم الهاتف"
+                            maxlength="8"
+                            oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                    </div>
+
+                    <!-- حقول استلام عند الوصول -->
+                    <div class="delivery-fields" id="fields-pickup" style="display:none">
+                        <input type="text" id="pickup-time" data-i18n-placeholder="ph_pickup_time" placeholder="الوقت المتوقع للوصول">
+                        <input type="tel"
+                            id="pickup-phone"
+                            data-i18n-placeholder="ph_phone"
+                            placeholder="رقم الهاتف"
+                            maxlength="8"
+                            oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                    </div>
+                </div>
+
+                <button class="checkout-btn" onclick="sendOrderToWhatsApp()">✅ <span data-i18n="confirm_btn">تأكيد الطلب</span></button>
+                <button class="clear-btn" onclick="clearCart()">🗑️ <span data-i18n="clear_btn">إفراغ السلة</span></button>
+            </div>
         </div>
-        <div class="card">
-            <img src="cup.jpeg">
-            <h2>pancakes</h2>
-            <p>كب كيك بلعسل</p>
-            <span>150mru</span>
-            <a href="#">اطلب الان</a>
-        </div>
-        </div>
+
+        <div class="toast" id="toast"></div>
+
+        <script>
+            /* ========== قاموس الترجمات ========== */
+            const translations = {
+                ar: {
+                    cart: 'السلة',
+                    cart_title: 'سلة الطلبات',
+                    cart_empty: 'سلتك فارغة<br><small>أضف منتجات من القائمة</small>',
+                    items_count_label: 'عدد المنتجات',
+                    total_label: 'الإجمالي',
+                    delivery_title: 'طريقة الاستلام',
+                    opt_dine: 'داخل المطعم',
+                    opt_car: 'أمام المطعم',
+                    opt_home: 'توصيل للمنزل',
+                    opt_pickup: 'استلام عند الوصول',
+                    confirm_btn: 'تأكيد الطلب',
+                    clear_btn: 'إفراغ السلة',
+                    order_btn: 'اطلب الان',
+                    cappuccino_name: 'Cappuccino',
+                    cappuccino_desc: 'قهوة بالحليب مع رغوة ناعمة',
+                    espresso_name: 'Espresso',
+                    espresso_desc: 'قهوة قوية ومركزة',
+                    muffin_name: 'Muffin',
+                    muffin_desc: 'مافن شكولاتة طري ولذيذ',
+                    pancake_name: 'Pancake',
+                    pancake_desc: 'بان كيك طري وخفيف مع صوص الشوكولاتة',
+                    cheesecake_name: 'Japanese Cheesecake',
+                    cheesecake_desc: 'تشيز كيك ياباني خفيف وهش بقوام ناعم',
+                    crepe_name: 'Chocolate & Banana Crep',
+                    crepe_desc: 'كريب طري بحشوة شكولاتة وموز طازج',
+                    ph_table: 'رقم الطاولة',
+                    ph_car_type: 'نوع السيارة',
+                    ph_phone: 'رقم الهاتف',
+                    ph_address: 'العنوان',
+                    ph_pickup_time: 'الوقت المتوقع للوصول',
+                    alert_empty_cart: 'السلة فارغة',
+                    alert_fill_info: 'رجاءً املأ المعلومات المطلوبة قبل إرسال الطلب.',
+                    alert_choose_delivery: 'رجاءً اختر طريقة الاستلام.',
+                    toast_added: '✅ تمت إضافة ',
+                    wa_header: 'طلب جديد من قائمة OSLO:\n\n',
+                    wa_total: '\nالإجمالي: ',
+                    wa_delivery: '\n\n📦 طريقة الاستلام:\n',
+                    wa_dine: 'داخل المطعم\nرقم الطاولة: ',
+                    wa_car: 'أمام المطعم / في السيارة\nنوع السيارة: ',
+                    wa_car_phone: '\nرقم الهاتف: ',
+                    wa_home: 'توصيل للمنزل\nالعنوان: ',
+                    wa_home_phone: '\nرقم الهاتف: ',
+                    wa_pickup: 'استلام عند الوصول\nالوقت المتوقع للوصول: ',
+                    wa_pickup_phone: '\nرقم الهاتف: ',
+                    items_unit: ' منتج',
+                },
+                en: {
+                    cart: 'Cart',
+                    cart_title: 'Order Cart',
+                    cart_empty: 'Your cart is empty<br><small>Add items from the menu</small>',
+                    items_count_label: 'Items',
+                    total_label: 'Total',
+                    delivery_title: 'Delivery Method',
+                    opt_dine: 'Dine In',
+                    opt_car: 'Curbside',
+                    opt_home: 'Home Delivery',
+                    opt_pickup: 'Pickup on Arrival',
+                    confirm_btn: 'Confirm Order',
+                    clear_btn: 'Clear Cart',
+                    order_btn: 'Order Now',
+                    cappuccino_name: 'Cappuccino',
+                    cappuccino_desc: 'Coffee with milk and smooth foam',
+                    espresso_name: 'Espresso',
+                    espresso_desc: 'Strong concentrated coffee',
+                    muffin_name: 'Muffin',
+                    muffin_desc: 'Soft and delicious chocolate muffin',
+                    pancake_name: 'Pancake',
+                    pancake_desc: 'Fluffy pancakes with chocolate sauce',
+                    cheesecake_name: 'Japanese Cheesecake',
+                    cheesecake_desc: 'Light and airy Japanese cheesecake',
+                    crepe_name: 'Chocolate & Banana Crêpe',
+                    crepe_desc: 'Soft crêpe with chocolate and fresh banana filling',
+                    ph_table: 'Table number',
+                    ph_car_type: 'Car model',
+                    ph_phone: 'Phone number',
+                    ph_address: 'Address',
+                    ph_pickup_time: 'Expected arrival time',
+                    alert_empty_cart: 'Your cart is empty',
+                    alert_fill_info: 'Please fill in the required information before placing your order.',
+                    alert_choose_delivery: 'Please choose a delivery method.',
+                    toast_added: '✅ Added: ',
+                    wa_header: 'New order from OSLO menu:\n\n',
+                    wa_total: '\nTotal: ',
+                    wa_delivery: '\n\n📦 Delivery Method:\n',
+                    wa_dine: 'Dine In\nTable Number: ',
+                    wa_car: 'Curbside / In Car\nCar Model: ',
+                    wa_car_phone: '\nPhone: ',
+                    wa_home: 'Home Delivery\nAddress: ',
+                    wa_home_phone: '\nPhone: ',
+                    wa_pickup: 'Pickup on Arrival\nExpected Arrival Time: ',
+                    wa_pickup_phone: '\nPhone: ',
+                    items_unit: ' items',
+                },
+                fr: {
+                    cart: 'Panier',
+                    cart_title: 'Panier de commandes',
+                    cart_empty: 'Votre panier est vide<br><small>Ajoutez des articles du menu</small>',
+                    items_count_label: 'Articles',
+                    total_label: 'Total',
+                    delivery_title: 'Mode de livraison',
+                    opt_dine: 'Sur place',
+                    opt_car: 'Devant le café',
+                    opt_home: 'Livraison à domicile',
+                    opt_pickup: 'Retrait à l\'arrivée',
+                    confirm_btn: 'Confirmer la commande',
+                    clear_btn: 'Vider le panier',
+                    order_btn: 'Commander',
+                    cappuccino_name: 'Cappuccino',
+                    cappuccino_desc: 'Café au lait avec mousse onctueuse',
+                    espresso_name: 'Espresso',
+                    espresso_desc: 'Café fort et concentré',
+                    muffin_name: 'Muffin',
+                    muffin_desc: 'Muffin au chocolat moelleux et délicieux',
+                    pancake_name: 'Pancake',
+                    pancake_desc: 'Pancakes moelleux avec sauce au chocolat',
+                    cheesecake_name: 'Cheesecake Japonais',
+                    cheesecake_desc: 'Cheesecake japonais léger et aérien',
+                    crepe_name: 'Crêpe Chocolat & Banane',
+                    crepe_desc: 'Crêpe moelleuse garnie de chocolat et banane fraîche',
+                    ph_table: 'Numéro de table',
+                    ph_car_type: 'Modèle de voiture',
+                    ph_phone: 'Numéro de téléphone',
+                    ph_address: 'Adresse',
+                    ph_pickup_time: 'Heure d\'arrivée prévue',
+                    alert_empty_cart: 'Votre panier est vide',
+                    alert_fill_info: 'Veuillez remplir les informations requises avant d\'envoyer la commande.',
+                    alert_choose_delivery: 'Veuillez choisir un mode de livraison.',
+                    toast_added: '✅ Ajouté : ',
+                    wa_header: 'Nouvelle commande du menu OSLO :\n\n',
+                    wa_total: '\nTotal : ',
+                    wa_delivery: '\n\n📦 Mode de livraison :\n',
+                    wa_dine: 'Sur place\nNuméro de table : ',
+                    wa_car: 'Devant le café / En voiture\nModèle : ',
+                    wa_car_phone: '\nTéléphone : ',
+                    wa_home: 'Livraison à domicile\nAdresse : ',
+                    wa_home_phone: '\nTéléphone : ',
+                    wa_pickup: 'Retrait à l\'arrivée\nHeure prévue : ',
+                    wa_pickup_phone: '\nTéléphone : ',
+                    items_unit: ' articles',
+                }
+            };
+
+            let currentLang = 'ar';
+
+            function t(key) {
+                return translations[currentLang][key] || translations['ar'][key] || key;
+            }
+
+            function setLang(lang) {
+                currentLang = lang;
+
+                // تحديث زر اللغة النشط
+                document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+                event.target.classList.add('active');
+
+                // dir للصفحة
+                document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+
+                // ترجمة العناصر النصية
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    if (translations[lang][key] !== undefined) {
+                        el.innerHTML = translations[lang][key];
+                    }
+                });
+
+                // ترجمة placeholder
+                document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                    const key = el.getAttribute('data-i18n-placeholder');
+                    if (translations[lang][key] !== undefined) {
+                        el.placeholder = translations[lang][key];
+                    }
+                });
+
+                // إعادة رسم السلة لتحديث النصوص الداخلية
+                updateCartUI();
+            }
+            /* ===================================== */
+
+            let cart = {};
+            let selectedDelivery = null;
+
+            /* ===== اختيار طريقة الاستلام ===== */
+            function selectDelivery(type) {
+                selectedDelivery = type;
+
+                ['dine','car','home','pickup'].forEach(t => {
+                    document.getElementById('opt-' + t).classList.remove('selected');
+                    document.getElementById('fields-' + t).style.display = 'none';
+                });
+
+                document.getElementById('opt-' + type).classList.add('selected');
+                document.getElementById('fields-' + type).style.display = 'flex';
+
+                document.querySelectorAll('.delivery-fields input').forEach(i => i.value = '');
+            }
+
+            /* ===== إرسال الطلب عبر واتساب ===== */
+            function sendOrderToWhatsApp() {
+                const items = Object.entries(cart);
+
+                if (items.length === 0) {
+                    alert(t('alert_empty_cart'));
+                    return;
+                }
+
+                if (!selectedDelivery) {
+                    alert(t('alert_choose_delivery'));
+                    return;
+                }
+
+                let deliveryText = '';
+                let valid = true;
+
+                if (selectedDelivery === 'dine') {
+                    const table = document.getElementById('table-number').value.trim();
+                    if (!table) {
+                        valid = false;
+                    } else {
+                        deliveryText = t('wa_dine') + table;
+                    }
+                } else if (selectedDelivery === 'car') {
+                    const carType = document.getElementById('car-type').value.trim();
+                    const carPhone = document.getElementById('car-phone').value.trim();
+                    if (!carType || !carPhone || carPhone.length !== 8) {
+                        valid = false;
+                    } else {
+                        deliveryText = t('wa_car') + carType + t('wa_car_phone') + carPhone;
+                    }
+                } else if (selectedDelivery === 'home') {
+                    const address = document.getElementById('home-address').value.trim();
+                    const homePhone = document.getElementById('home-phone').value.trim();
+                    if (!address || !homePhone || homePhone.length !== 8) {
+                        valid = false;
+                    } else {
+                        deliveryText = t('wa_home') + address + t('wa_home_phone') + homePhone;
+                    }
+                } else if (selectedDelivery === 'pickup') {
+                    const time = document.getElementById('pickup-time').value.trim();
+                    const pickupPhone = document.getElementById('pickup-phone').value.trim();
+                    if (!time || !pickupPhone || pickupPhone.length !== 8) {
+                        valid = false;
+                    } else {
+                        deliveryText = t('wa_pickup') + time + t('wa_pickup_phone') + pickupPhone;
+                    }
+                }
+
+                if (!valid) {
+                    alert(t('alert_fill_info'));
+                    return;
+                }
+
+                let message = t('wa_header');
+                let total = 0;
+
+                items.forEach(([name, item]) => {
+                    let itemTotal = item.price * item.qty;
+                    message += name + ' × ' + item.qty + ' = ' + itemTotal + ' MRU\n';
+                    total += itemTotal;
+                });
+
+                message += t('wa_total') + total + ' MRU';
+                message += t('wa_delivery') + deliveryText;
+
+                let phoneNumber = "22230788882";
+                let whatsappLink = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(message);
+                window.open(whatsappLink, "_blank");
+            }
+
+            /* ===== السلة ===== */
+            function addCart(name, price) {
+                if (cart[name]) {
+                    cart[name].qty++;
+                } else {
+                    cart[name] = { price: price, qty: 1 };
+                }
+                updateCartUI();
+                showToast(t('toast_added') + name);
+                bumpCount();
+            }
+
+            function changeQty(name, delta) {
+                if (!cart[name]) return;
+                cart[name].qty += delta;
+                if (cart[name].qty <= 0) delete cart[name];
+                updateCartUI();
+            }
+
+            function clearCart() {
+                cart = {};
+                updateCartUI();
+            }
+
+            function updateCartUI() {
+                const items = Object.entries(cart);
+                const countEl = document.getElementById('count');
+                const itemsEl = document.getElementById('cartItems');
+                const emptyEl = document.getElementById('emptyMsg');
+                const footerEl = document.getElementById('cartFooter');
+
+                const totalQty = items.reduce((s, [, v]) => s + v.qty, 0);
+                countEl.textContent = totalQty;
+
+                // تحديث نص الفراغ
+                const emptyP = emptyEl.querySelector('p');
+                if (emptyP) emptyP.innerHTML = t('cart_empty');
+
+                if (items.length === 0) {
+                    emptyEl.style.display = 'block';
+                    footerEl.style.display = 'none';
+                    Array.from(itemsEl.querySelectorAll('.cart-item')).forEach(el => el.remove());
+                    return;
+                }
+
+                emptyEl.style.display = 'none';
+                footerEl.style.display = 'block';
+
+                Array.from(itemsEl.querySelectorAll('.cart-item')).forEach(el => el.remove());
+
+                items.forEach(([name, item]) => {
+                    const div = document.createElement('div');
+                    div.className = 'cart-item';
+                    div.innerHTML = `
+                        <div class="ci-info">
+                            <div class="ci-name">${name}</div>
+                            <div class="ci-price">${item.price} MRU × ${item.qty}</div>
+                            <div class="ci-controls">
+                                <button class="qty-btn" onclick="changeQty('${name}', -1)">−</button>
+                                <span class="qty-num">${item.qty}</span>
+                                <button class="qty-btn" onclick="changeQty('${name}', 1)">+</button>
+                            </div>
+                        </div>
+                        <div class="ci-total">${item.price * item.qty} MRU</div>
+                    `;
+                    itemsEl.appendChild(div);
+                });
+
+                const total = items.reduce((s, [, v]) => s + (v.price * v.qty), 0);
+                document.getElementById('itemCount').textContent = totalQty + t('items_unit');
+                document.getElementById('totalPrice').textContent = total + ' MRU';
+            }
+
+            function openCart() {
+                document.getElementById('cartPanel').classList.add('open');
+                document.getElementById('overlay').classList.add('open');
+            }
+
+            function closeCart() {
+                document.getElementById('cartPanel').classList.remove('open');
+                document.getElementById('overlay').classList.remove('open');
+            }
+
+            function showToast(msg) {
+                const t = document.getElementById('toast');
+                t.textContent = msg;
+                t.classList.add('show');
+                setTimeout(() => t.classList.remove('show'), 2200);
+            }
+
+            function bumpCount() {
+                const el = document.getElementById('count');
+                el.classList.add('bump');
+                setTimeout(() => el.classList.remove('bump'), 300);
+            }
+        </script>
     </body>
-    </html>
-
-
-
-
-
-       
-
-
-
+</html>
